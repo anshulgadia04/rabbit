@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 export const MyOrderPage = () => {
 
-
+    const navigate = useNavigate()
     const [orders , setOrders] = useState([]);
+
+    const handleRowClick = (orderId) => {
+        navigate(`/order/${orderId}`)
+    }
+
     useEffect(() => {
         setTimeout(()=>{
             const mokeOrders = [
@@ -61,7 +67,7 @@ export const MyOrderPage = () => {
                 <tbody>
                     {
                         orders.length > 0 ? (orders.map((order) => (
-                            <tr key={order._id} className='border-b border-gray-200  hover:border-gray-500 cursor-pointer'>
+                            <tr key={order._id} onClick={() => handleRowClick(order._id)} className='border-b border-gray-200  hover:border-gray-500 cursor-pointer'>
                             <td className='py-2 px-2 sm:px-4 sm:py-4'>
                                 <img 
                                 className='w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-lg'
