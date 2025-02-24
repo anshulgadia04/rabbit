@@ -57,6 +57,7 @@ router.delete('/:id' , protect , admin , async (req,res) => {
         }
     } catch (error) {
         console.log('Error in deleting order : ', error);
+        
         res.status(500).json({message : 'Server Error'});
     }
 });
