@@ -29,28 +29,28 @@ const Navbar = () => {
       {/* center navigation icons*/}
       <div className="hidden md:flex space-x-6">
         <Link
-          to="collections/all"
+          to="collections/all?gender=Men"
           className=" text-gray-700 hover:text-black text-sm font-medium uppercase"
         >
           Men
         </Link>
 
         <Link
-          to="#"
+          to="collections/all?gender=Women"
           className=" text-gray-700 hover:text-black text-sm font-medium uppercase"
         >
           Women
         </Link>
 
         <Link
-          to="#"
+          to="collections/all?category=Top Wear"
           className=" text-gray-700 hover:text-black text-sm font-medium uppercase"
         >
           Top wear
         </Link>
 
         <Link
-          to="#"
+          to="collections/all?category=Bottom Wear"
           className=" text-gray-700 hover:text-black text-sm font-medium uppercase"
         >
           Bottom Wear
@@ -96,10 +96,10 @@ const Navbar = () => {
       <div className="p-4">
         <h2 className="text-xl font-bold mb-4">Menu</h2>
         <nav className="space-y-4">
-        <Link onClick={toogleNavBar} to={"collections/all"} className="block text-gray-600 hover:text-black">Men</Link>
-        <Link onClick={toogleNavBar} to={"#"} className="block text-gray-600 hover:text-black">Women</Link>
-        <Link onClick={toogleNavBar} to={"#"} className="block text-gray-600 hover:text-black">Top Wear</Link>
-        <Link onClick={toogleNavBar} to={"#"} className="block text-gray-600 hover:text-black">Bottom Wear</Link>
+        <Link onClick={toogleNavBar} to="collections/all?gender=Men" className="block text-gray-600 hover:text-black">Men</Link>
+        <Link onClick={toogleNavBar} to="collections/all?gender=Women" className="block text-gray-600 hover:text-black">Women</Link>
+        <Link onClick={toogleNavBar} to="collections/all?category=Top Wear" className="block text-gray-600 hover:text-black">Top Wear</Link>
+        <Link onClick={toogleNavBar} to="collections/all?category=Bottom Wear" className="block text-gray-600 hover:text-black">Bottom Wear</Link>
         </nav>
       </div>
     </div>

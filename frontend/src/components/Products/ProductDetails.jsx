@@ -1,11 +1,22 @@
-import React, { use, useEffect, useState } from 'react'
+import React, { useEffect, useId, useState } from 'react'
 import {toast } from 'sonner';
 import ProductGrid from './ProductGrid.jsx'
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProductDetails, fetchSimilarProducts } from '../../redux/slices/productsSlice.js';
+import { addToCart } from '../../redux/slices/cartSlice.js';
 
 
 
 
-const ProductDetails = () => {
+const ProductDetails = ({productId}) => {
+
+    const {id} = useParams();
+    const dispatch = useDispatch();
+    const {selectedProduct ,loading , error , similarProducts} = useSelector((state) => state.products);
+    const {user , guestId} = useSelector((state) => state.auth);
+
+
 
     const [mainImage , setMainImage] = useState("");
     const [selectedSize , setSelectedSize] = useState("");
@@ -14,63 +25,25 @@ const ProductDetails = () => {
     const [isbuttonDisabled , setIsButtonDisabled] = useState(false);
 
 
-    
+    const productFetchId = productId || id;
+    useEffect(()=>{
+        if(productFetchId){
+            dispatch(fetchProductDetails(productFetchId));
+            dispatch(fetchSimilarProducts({id : productFetchId}))
+        }
+    } , [dispatch , productFetchId])
 
-    const selectedProduct = {
-        name : "Stylish Jacket",
-        price : 120,
-        originalPrice : 150,
-        desc : "This is stylish jacket perfect for any occasion.",
-        brand : "FashionHub",
-        material : "Leather",
-        sizes : ["S","M","L","XL"],
-        colors : ["Red" , "Black"],
-        images : [
-            {
-                url : "https://picsum.photos/500/500?random=1",
-                alt : "Stylish Jacket 1"
-            },
-            {
-                url : "https://picsum.photos/500/500?random=2",
-                alt : "Stylish Jacket 2"
-            }
-        ]
-    };
 
-    const similarProducts = [
-        {
-            _id: 1,
-            name: "Casual T-Shirt",
-            price: 499,
-            images: [{ url: "https://picsum.photos/500/500?random=101" }]
-        },
-        {
-            _id: 2,
-            name: "Denim Jacket",
-            price: 1499,
-            images: [{ url: "https://picsum.photos/500/500?random=102" }]
-        },
-        {
-            _id: 3,
-            name: "Summer Dress",
-            price: 1299,
-            images: [{ url: "https://picsum.photos/500/500?random=103" }]
-        },
-        {
-            _id: 4,
-            name: "Running Shoes",
-            price: 2499,
-            images: [{ url: "https://picsum.photos/500/500?random=104" }]
-        },
-    ];
     
 
     useEffect(()=>{
         if(selectedProduct?.images?.length > 0)
         {
-            setMainImage(selectedProduct.images[0].url);            
+            setMainImage(selectedProduct.images[0].url);     
+            // console.log("Selected Product : " , selectedProduct);
+                   
         }
-    },[])   
+    },[selectedProduct])   
 
     const handleQuantityChange = (action) => {
         if(action === "plus") setQuantity((prev) => prev + 1);
@@ -86,15 +59,39 @@ const ProductDetails = () => {
         }
 
         setIsButtonDisabled(true);
-        setTimeout(() => {
-            toast.success("Product added to cart!" , {duration : 1000});
-            setIsButtonDisabled(false)
-        } , 500);
-       
+
+        dispatch(addToCart({
+            productId : productFetchId , 
+            quantity , 
+            size : selectedSize , 
+            color : selectedColor,
+            guestId,
+            userId : user?._id,    
+        }))
+        .then(() => {
+            toast.success("Product Added To Cart" , {
+                duration : 1000
+            })
+        }) 
+        .finally(() => {
+            setIsButtonDisabled(false);
+        });
+    };
+
+    if(loading){
+        return <p>Loading...</p>
+    }
+
+    if(error){
+        return <p>Error : {error}</p>
     }
 
   return (
     <div className='p-6'>
+    {
+        
+        selectedProduct && (
+    
         <div className='max-w-6xl mx-auto bg-white p-4 rounded-lg'>
             <div className='flex flex-col md:flex-row'>
                 {/* left thumbnail */}
@@ -149,7 +146,7 @@ const ProductDetails = () => {
                         {selectedProduct.price}
                     </p>
                     <p className='mb-4 text-gray-600'>
-                        {selectedProduct.desc}
+                        {selectedProduct.description}
                     </p>
                     <div className='mb-4'>
                         <p className='text-gray-700'>Colors:</p>
@@ -225,10 +222,12 @@ const ProductDetails = () => {
             {/* You may also like section */}
             <div className='mt-20'>
                 <h2 className='text-2xl text-center font-medium mb-4'>You May Also Like</h2>
-                <ProductGrid products = {similarProducts}/>
+                <ProductGrid products = {similarProducts} loading={loading} error={error}/>
             </div>
 
         </div>
+        )
+    }
     </div>
   )
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import {FiChevronLeft} from 'react-icons/fi'
 import {Link} from 'react-router-dom'
 import {FiChevronRight} from 'react-icons/fi'
+import axios from 'axios'
 const NewArrivals = () => {
 
   const scrollRef = useRef(null);
@@ -11,90 +12,21 @@ const NewArrivals = () => {
   const [canScrollLeft , setCanScrollLeft] = useState(false);
   const [canScrollRight , setCanScrollRight] = useState(true);
 
+  const [newArrivalArray, setNewArrivalArray] = useState([]);
+
+  useEffect(() => {
+    const fetchNewArrivals = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products/new-arrivals`);
+        setNewArrivalArray(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchNewArrivals();
+  } , []);
 
 
-  const newArrivalArray = [
-    {
-      _id: 1,
-      name: "Classic Leather Jacket",
-      price: 120,
-      images: [
-        {
-          url: "https://picsum.photos/500/500?random=1"
-        }
-      ]
-    },
-    {
-      _id: 2,
-      name: "Modern Denim Jacket",
-      price: 120,
-      images: [
-        {
-          url: "https://picsum.photos/500/500?random=2"
-        }
-      ]
-    },
-    {
-      _id: 3,
-      name: "Casual Windbreaker",
-      price: 120,
-      images: [
-        {
-          url: "https://picsum.photos/500/500?random=3"
-        }
-      ]
-    },
-    {
-      _id: 4,
-      name: "Elegant Blazer",
-      price: 120,
-      images: [
-        {
-          url: "https://picsum.photos/500/500?random=4"
-        }
-      ]
-    },
-    {
-      _id: 5,
-      name: "Chic Bomber Jacket",
-      price: 120,
-      images: [
-        {
-          url: "https://picsum.photos/500/500?random=5"
-        }
-      ]
-    },
-    {
-      _id: 6,
-      name: "Vintage Suede Jacket",
-      price: 120,
-      images: [
-        {
-          url: "https://picsum.photos/500/500?random=6"
-        }
-      ]
-    },
-    {
-      _id: 7,
-      name: "Sporty Track Jacket",
-      price: 120,
-      images: [
-        {
-          url: "https://picsum.photos/500/500?random=7"
-        }
-      ]
-    },
-    {
-      _id: 8,
-      name: "Trendy Puffer Jacket",
-      price: 120,
-      images: [
-        {
-          url: "https://picsum.photos/500/500?random=8"
-        }
-      ]
-    },
-];
 
 const scroll = (direction) => {
   const scrollAmount = direction === "left" ? -300 : 300;
@@ -144,7 +76,7 @@ useEffect(() => {
       container.removeEventListener("scroll", updateScrollButtons);
     }
   };
-}, []);
+}, [newArrivalArray]);
 
 
 

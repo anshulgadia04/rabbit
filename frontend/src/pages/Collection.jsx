@@ -4,14 +4,29 @@ import FiltterSideBar from '../components/Products/FiltterSideBar';
 import SortOptions from '../components/Products/SortOptions';
 import ProductGrid from '../components/Products/ProductGrid.jsx'
 
+import { useParams , useSearchParams } from 'react-router-dom';
+import { useDispatch , useSelector } from 'react-redux';
+import {fetchProductsByFilter} from '../redux/slices/productsSlice';
+
 
 
 
 const Collection = () => {
 
-    const [products , setProducts] = useState([]);
+    // const [products , setProducts] = useState([]);
     const sideBarRef = useRef(null);
     const [isSideBarOpen , setIsSideBarOpen] = useState(false);
+
+
+    const dispatch = useDispatch();
+    const {collection} = useParams();
+    const [searchParams] = useSearchParams();
+    const {products , loading , error} = useSelector(state => state.products);
+    const queryParams = Object.fromEntries([...searchParams]);
+
+    useEffect(() => {
+      dispatch(fetchProductsByFilter({collection , ...queryParams}));
+    } ,[dispatch , collection , searchParams]);
 
     const toglleSideBar = () => {
         setIsSideBarOpen(!isSideBarOpen);
@@ -32,94 +47,6 @@ const Collection = () => {
         };
       }, []);
 
-    useEffect(()=>{
-        setTimeout(()=>{
-            const fetchedProducts = [
-                {
-                  _id: 1,
-                  name: "Classic Leather Jacket",
-                  price: 120,
-                  images: [
-                    {
-                      url: "https://picsum.photos/500/500?random=1"
-                    }
-                  ]
-                },
-                {
-                  _id: 2,
-                  name: "Modern Denim Jacket",
-                  price: 120,
-                  images: [
-                    {
-                      url: "https://picsum.photos/500/500?random=2"
-                    }
-                  ]
-                },
-                {
-                  _id: 3,
-                  name: "Casual Windbreaker",
-                  price: 120,
-                  images: [
-                    {
-                      url: "https://picsum.photos/500/500?random=3"
-                    }
-                  ]
-                },
-                {
-                  _id: 4,
-                  name: "Elegant Blazer",
-                  price: 120,
-                  images: [
-                    {
-                      url: "https://picsum.photos/500/500?random=4"
-                    }
-                  ]
-                },
-                {
-                  _id: 5,
-                  name: "Chic Bomber Jacket",
-                  price: 120,
-                  images: [
-                    {
-                      url: "https://picsum.photos/500/500?random=5"
-                    }
-                  ]
-                },
-                {
-                  _id: 6,
-                  name: "Vintage Suede Jacket",
-                  price: 120,
-                  images: [
-                    {
-                      url: "https://picsum.photos/500/500?random=6"
-                    }
-                  ]
-                },
-                {
-                  _id: 7,
-                  name: "Sporty Track Jacket",
-                  price: 120,
-                  images: [
-                    {
-                      url: "https://picsum.photos/500/500?random=7"
-                    }
-                  ]
-                },
-                {
-                  _id: 8,
-                  name: "Trendy Puffer Jacket",
-                  price: 120,
-                  images: [
-                    {
-                      url: "https://picsum.photos/500/500?random=8"
-                    }
-                  ]
-                }];
-
-        setProducts(fetchedProducts);
-
-        },1000)
-    },[]);
 
   return (
     <div className='flex flex-col lg:flex-row'>
@@ -141,7 +68,7 @@ const Collection = () => {
 
 
             {/* product Grid */}
-            <ProductGrid products={products} />
+            <ProductGrid products={products} loading={loading} error={error} />
         </div>
 
     </div>

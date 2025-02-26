@@ -1,6 +1,7 @@
 const express = require('express');
 const Product = require('../models/Product');
 const {protect , admin} = require('../middleware/authMiddleware');
+const {mongoose} = require('mongoose');
 
 
 
@@ -240,7 +241,7 @@ router.get("/new-arrivals" , async (req,res) => {
         }
     } catch (error) {
         console.log("Error in new arrivals : ", error);
-        res.status(500).send("Internal Server Error");x
+        res.status(500).send("Internal Server Error");
         
     }
 })
@@ -257,7 +258,7 @@ router.get("/:id" , async (req,res) => {
             res.status(201).json(product);
         }
         else{
-            res.status(404).json({message : "Product Not Fount"})
+            res.status(404).json({message : "Product Not Found"})
         }
     } catch (error) {
         console.log("Error in finding a Single Product : " , error);
@@ -279,7 +280,7 @@ router.get("/similar/:id" , async (req,res) => {
         }
 
         const similarProducts = await Product.find({
-            _id : {$ne : id} , //exclude the current product id
+            _id : {$ne : new mongoose.Types.ObjectId(id)} , //exclude the current product id
             gender : product.gender,
             category : product.category
         }).limit(4);

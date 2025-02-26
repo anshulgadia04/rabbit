@@ -1,91 +1,73 @@
-import React from 'react'
-import Hero from '../components/Layout/Hero'
-import GenderCollectionSection from '../components/Products/GenderCollectionSection'
-import NewArrivals from '../components/Products/NewArrivals'
-import ProductDetails from '../components/Products/ProductDetails'
-import ProductGrid from '../components/Products/ProductGrid'
-import FeaturedCollection from '../components/Products/FeaturedCollection'
-import FeatureSection from '../components/Products/FeatureSection'
-
-const placeHolderProducts = [
-  {
-      _id: 1,
-      name: "Floral Blouse",
-      price: 899,
-      images: [{ url: "https://picsum.photos/500/500?random=201" }]
-  },
-  {
-      _id: 2,
-      name: "Off-Shoulder Top",
-      price: 1199,
-      images: [{ url: "https://picsum.photos/500/500?random=202" }]
-  },
-  {
-      _id: 3,
-      name: "Crop Hoodie",
-      price: 1599,
-      images: [{ url: "https://picsum.photos/500/500?random=203" }]
-  },
-  {
-      _id: 4,
-      name: "Chiffon Tunic",
-      price: 1399,
-      images: [{ url: "https://picsum.photos/500/500?random=204" }]
-  },
-  {
-      _id: 5,
-      name: "Lace Peplum Top",
-      price: 1299,
-      images: [{ url: "https://picsum.photos/500/500?random=205" }]
-  },
-  {
-      _id: 6,
-      name: "Casual Tank Top",
-      price: 799,
-      images: [{ url: "https://picsum.photos/500/500?random=206" }]
-  },
-  {
-      _id: 7,
-      name: "V-Neck Sweater",
-      price: 1799,
-      images: [{ url: "https://picsum.photos/500/500?random=207" }]
-  },
-  {
-      _id: 8,
-      name: "Embroidered Kurti",
-      price: 1899,
-      images: [{ url: "https://picsum.photos/500/500?random=208" }]
-  },
-];
-
-
+import React, { useEffect, useState } from 'react';
+import Hero from '../components/Layout/Hero';
+import GenderCollectionSection from '../components/Products/GenderCollectionSection';
+import NewArrivals from '../components/Products/NewArrivals';
+import ProductDetails from '../components/Products/ProductDetails';
+import ProductGrid from '../components/Products/ProductGrid';
+import FeaturedCollection from '../components/Products/FeaturedCollection';
+import FeatureSection from '../components/Products/FeatureSection';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProductsByFilter } from '../redux/slices/productsSlice'
+import axios from 'axios'; // Import axios
 
 const Home = () => {
-  return (
-   <>
-        <Hero/>
-        <GenderCollectionSection/>
-        <NewArrivals/>
+    const dispatch = useDispatch();
+    const { products, loading, error } = useSelector(state => state.products); // Corrected destructuring
 
-        {/* best seller */}
-        <h2 className='text-3xl text-center font-bold mb-4'>Best Seller</h2>
-        <ProductDetails/>
+    const [bestSellerProduct, setBestSellerProduct] = useState(null);
 
+    useEffect(() => {
+        // Fetch products for a specific collection
+        dispatch(fetchProductsByFilter({
+            gender: "Women",
+            category: "Bottom Wear",
+            limit: 8
+        }));
 
-        {/* Top wears for women */}
-        <div className='container mx-auto'>
-          <h2 className='text-3xl text-center font-bold mb-4'>Top Wears for Women</h2>
-          <ProductGrid products={placeHolderProducts}/>
-        </div>
+        // Fetch best seller product
+        const fetchBestSeller = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products/best-seller`);
+                // console.log("I am in Home.jsx and bestseller res is : " , response.data);
+                
+                setBestSellerProduct(response.data);
+            } catch (error) {
+                console.error("Error fetching best-seller product:", error);
+            }
+        };
 
+        fetchBestSeller();
+    }, [dispatch]);
 
-        {/* Featured Collection */}
-        <FeaturedCollection/>
+    return (
+        <>
+            <Hero />
+            <GenderCollectionSection />
+            <NewArrivals />
 
+            {/* Best Seller */}
+            <h2 className="text-3xl text-center font-bold mb-4">Best Seller</h2>
+            {
+                bestSellerProduct ? (
+                    <ProductDetails productId={bestSellerProduct._id} />
+                ) : (
+                    <p className="text-center">Loading Best Seller Products...</p>
+                )
+            }
 
-        <FeatureSection/>
-   </>
-  )
-}
+            {/* Top wears for women */}
+            <div className="container mx-auto">
+                <h2 className="text-3xl text-center font-bold mb-4">Top Wears for Women</h2>
+                <ProductGrid products={products} loading={loading} error={error} />
+            </div>
 
-export default Home
+            {/* Featured Collection */}
+            <FeaturedCollection />
+
+            {/* features */}
+            <FeatureSection />
+        </>
+    );
+};
+
+export default Home;
