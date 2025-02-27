@@ -212,7 +212,7 @@ router.get("/best-seller" , async (req,res) => {
         const sort = {rating : -1}
         const bestSellers = await Product.find().sort(sort);
         if(bestSellers){
-            res.json(bestSellers);
+            res.json(bestSellers[0]);
         }
         else{
             res.status(404).json({message : "No Seller Found"})

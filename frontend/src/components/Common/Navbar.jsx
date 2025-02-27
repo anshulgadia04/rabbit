@@ -4,8 +4,17 @@ import {HiOutlineUser , HiOutlineShoppingBag , HiBars3BottomRight} from 'react-i
 import SearchBar from "./SearchBar";
 import CartDrawer from "../Layout/CartDrawer";
 import { useState } from "react";
-import { IoMdAdd, IoMdClose } from "react-icons/io";
+import { IoMdClose } from "react-icons/io";
+import { useSelector } from "react-redux";
 const Navbar = () => {
+
+
+  const {cart} = useSelector(state => state.cart);
+  const cartItemCount = cart?.products?.reduce((acc , item) => acc + item.quantity , 0) || 0;
+
+  // const userInfo = localStorage.getItem("userInfo") || {};
+  // const isAdmin = userInfo?.role === "admin" ? true : false;
+  // console.log("isAdmin : " , isAdmin);
 
 
   const [isdrawerOpen , setIsDrawerOpen] = useState(false);
@@ -23,7 +32,7 @@ const Navbar = () => {
         <nav className="container flex items-center justify-between py-4 px-6 mx-auto">
       {/* left logo */}
       <div>
-        <Link className="text-2xl font-medium">Rabbit</Link>
+        <Link to={'/'} className="text-2xl font-medium">Rabbit</Link>
       </div>
 
       {/* center navigation icons*/}
@@ -60,7 +69,8 @@ const Navbar = () => {
       {/* right icons */}
       <div className="flex items-center space-x-4">
 
-        <Link to="/admin" className="block bg-black px-2 rounded text-sm text-white">Admin</Link>
+      <Link to="/admin" className="block bg-black px-2 rounded text-sm text-white">Admin</Link>
+
 
         <Link to='/profile' className=' hover:text-black'>
           <HiOutlineUser className="h-6 w-6 text-gray-700"/>
@@ -68,7 +78,9 @@ const Navbar = () => {
 
         <button onClick={toggleCartDrawer} className="relative hover:text-black cursor-pointer">
           <HiOutlineShoppingBag className="h-6 w-6 text-gray-700"/>
-          <span className="absolute -top-1 bg-[#e22e0e] text-white text-xs rounded-full px-2 py-0.5">4</span>
+         {
+          cartItemCount > 0 && ( <span className="absolute -top-1 bg-[#e22e0e] text-white text-xs rounded-full px-2 py-0.5">{cartItemCount}</span>)
+         }
         </button>
 
         {/* search */}

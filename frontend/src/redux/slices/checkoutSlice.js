@@ -4,9 +4,12 @@ import axios from "axios";
 //Async thunk to fetch the checkout details
 export const createCheckout = createAsyncThunk('checkout/createCheckout' , async (checkoutData , {rejectWithValue}) => {
     try {
+
+        // console.log("Chekout Data is : " , checkoutData);
+        
         const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/checkout` , checkoutData , {
             headers : {
-                Authorization : `Bearer ${localStorage.getItem('authToken')}`,
+                Authorization : `Bearer ${localStorage.getItem('userToken')}`,
             }
         });
         return response.data;

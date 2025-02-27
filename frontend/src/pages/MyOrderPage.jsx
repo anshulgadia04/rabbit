@@ -1,48 +1,22 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch  , useSelector} from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { fetchUsersOrder } from '../redux/slices/orderSlice';
 
 export const MyOrderPage = () => {
 
     const navigate = useNavigate()
-    const [orders , setOrders] = useState([]);
+    // const [orders , setOrders] = useState([]);
+    const dispatch = useDispatch();
+    const {loading , error , orders , totalOrder , orderDetails} = useSelector(state => state.orders);
 
     const handleRowClick = (orderId) => {
         navigate(`/order/${orderId}`)
     }
 
     useEffect(() => {
-        setTimeout(()=>{
-            const mokeOrders = [
-                {
-                    _id : "12345",
-                    createdAt : new Date(),
-                    shippingAddress : {city : "Delhi" , country : "India"},
-                    orderItems : [
-                        {
-                            name : "Product 1",
-                            image : "https://picsum.photos/500/500?random=1",
-                        },
-                    ],
-                    totalPrice : 100,
-                    isPaid : true,                
-                },
-                {
-                    _id : "4536",
-                    createdAt : new Date(),
-                    shippingAddress : {city : "Delhi" , country : "India"},
-                    orderItems : [
-                        {
-                            name : "Product 2",
-                            image : "https://picsum.photos/500/500?random=2",
-                        },
-                    ],
-                    totalPrice : 100,
-                    isPaid : false,                
-                }
-            ];
-
-            setOrders(mokeOrders);
-        } , 1000);
+        dispatch(fetchUsersOrder());
+        // console.log(orders)
     },[]);
 
 

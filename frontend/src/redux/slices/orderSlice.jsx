@@ -4,35 +4,41 @@ import axios from "axios";
 
 
 // fetch order by user id and guest id
-export const fetchUsersOrder = createAsyncThunk('order/fetchUsersOrder' , async ({} , {rejectWithValue}) => {
+export const fetchUsersOrder = createAsyncThunk('order/fetchUsersOrder' , async (_ , {rejectWithValue}) => {
+    // console.log("I am in fetchUsersOrder");
+    
     try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/my-orders` , 
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/orders/my-orders` , 
             {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    Authorization: `Bearer ${localStorage.getItem('userToken')}`,
                 }
             }
         );
+        // console.log("I am in fetchUsersOrder : ", response.data);
         return response.data;
     } catch (error) {
         console.log(error);
         return rejectWithValue(error.response?.data || "Something went wrong");
-
     }
 });
 
 
 // fetch order by order id
 export const fetchOrderDetails = createAsyncThunk('order/fetchOrderDetails' , async ({orderId} , {rejectWithValue}) => {
+    // console.log("I am in fetchOrderDetails : ", orderId);
+    
     try {
-        const reponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/orders/${orderId}` ,
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/orders/${orderId}` ,
             {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    Authorization: `Bearer ${localStorage.getItem('userToken')}`,
                 }
             });
+            // console.log("I am in fetchOrderDetails : ", response.data);
 
             return response.data;
+            
     } catch (error) {
         console.log(error);
         return rejectWithValue(error.response?.data || "Something went wrong");
