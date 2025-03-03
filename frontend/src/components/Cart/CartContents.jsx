@@ -6,7 +6,6 @@ import { useEffect } from "react";
 
 
 
-
 const CartContents = ({cart , userId , guestId}) => {
 
   const handleAddToCart = (productId , delta , quantity , size , color) => {

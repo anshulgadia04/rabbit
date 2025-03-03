@@ -4,8 +4,38 @@ import {IoLogoInstagram} from 'react-icons/io'
 import {RiTwitterXLine} from 'react-icons/ri'
 import {FiPhoneCall} from 'react-icons/fi'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import axios from 'axios'
+import {toast} from 'sonner'
+
 
 const Footer = () => {
+
+    const [email , setEmail] = useState("");
+    const handleSubscribe = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/subscribe` , {email});
+        if(response.status === 200){
+            toast.success("Subscribed Successfully")
+            // console.log("Subscribed Successfully");
+            
+            
+        }
+        if(response.status === 400){
+            toast.error("Email already subscribed", {duration : 2000})
+            // console.log("Email already subscribed");
+        }
+
+        setEmail("");
+
+        } catch (error) {
+            // console.log("Error in subscribing : " , error);
+            toast.error("Email already subscribed")               
+        }
+        
+    }
+
   return (
     <footer className='border-t py-12'>
         <div className='container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-4 lg:px-0'>
@@ -16,8 +46,11 @@ const Footer = () => {
                 </p>
                 <p className='font-medium text-sm text-gray-800 mb-6'>Sign up and get 10% off on your first order.</p>
                 <form className='flex'>
-                    <input type='email' placeholder='Enter your email' className='p-3 w-full text-sm border-t border-l border-b border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all required:'/>
+                    <input 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)} type='email' placeholder='Enter your email' className='p-3 w-full text-sm border-t border-l border-b border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all required:'/>
                     <button type='submit'
+                    onClick={handleSubscribe}
                 className='bg-black text-white hover:bg-gray-800 px-6 py-3 text-sm rounded-r-md'
                 >
                     Subscribe
